@@ -1,614 +1,1225 @@
-# Meeting Summarizer Backend# Meeting Summarizer Backend
+# Meeting Summarizer Backend# Meeting Summarizer Backend# Meeting Summarizer Backend
 
 
 
-Real-time meeting transcription and summarization system that processes live meeting transcripts and generates intelligent summaries using a local LLM.Real-time meeting transcription and summarization backend with local LLM inference.
+Real-time meeting transcription and summarization system that processes live meeting transcripts and generates intelligent summaries using a local LLM.
 
 
 
----## Architecture
+---Real-time meeting transcription and summarization system that processes live meeting transcripts and generates intelligent summaries using a local LLM.Real-time meeting transcription and summarization backend with local LLM inference.
 
 
 
-## 🎯 What Does It Do?```
+## 🎯 What Does It Do?
 
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐
 
-This backend automatically:│   Client    │────▶│  FastAPI     │────▶│  PostgreSQL │
 
-- **Ingests** meeting transcripts in real-time (segment by segment)│  (WebSocket)│◀────│  Server      │◀────│  Database   │
+This backend automatically:---## Architecture
 
-- **Generates** intelligent summaries as the meeting progresses└─────────────┘     └──────────────┘     └─────────────┘
+- **Ingests** meeting transcripts in real-time (segment by segment)
 
-- **Extracts** decisions, action items, and key topics                           │
+- **Generates** intelligent summaries as the meeting progresses
 
-- **Provides** final comprehensive summaries when meetings end                           ▼
+- **Extracts** decisions, action items, and key topics
 
-                    ┌──────────────┐     ┌─────────────┐
+- **Provides** final comprehensive summaries when meetings end## 🎯 What Does It Do?```
 
-**Key Innovation**: Unlike services that require external APIs (OpenAI, etc.), this runs entirely on your own hardware with local LLM models, giving you complete privacy and control.                    │   Worker     │────▶│  Inference  │
 
-                    │   Queue      │◀────│  Service    │
 
----                    └──────────────┘     └─────────────┘
+**Key Innovation**: Unlike services that require external APIs (OpenAI, etc.), this runs entirely on your own hardware with local LLM models, giving you complete privacy and control.┌─────────────┐     ┌──────────────┐     ┌─────────────┐
 
-```
 
-## 🏗️ Architecture
 
-## Features
+---This backend automatically:│   Client    │────▶│  FastAPI     │────▶│  PostgreSQL │
 
-```
 
-Meeting Audio → Transcription → Backend API → Processing → Summary- **Real-time Ingestion**: WebSocket-based streaming of meeting segments
 
-                                     ↓- **Async Summarization**: Background workers with retry logic and exponential backoff
+## 🏗️ Architecture- **Ingests** meeting transcripts in real-time (segment by segment)│  (WebSocket)│◀────│  Server      │◀────│  Database   │
 
-                              ┌──────────────┐- **Chunking**: Sliding window with 10-20% overlap for context preservation
 
-                              │  FastAPI     │- **Local LLM**: llama.cpp-based inference with GPU acceleration
 
-                              │  REST API    │- **Structured Output**: JSON summaries with action items, decisions, topics
+```- **Generates** intelligent summaries as the meeting progresses└─────────────┘     └──────────────┘     └─────────────┘
 
-                              └──────────────┘- **Incremental Updates**: PostgreSQL LISTEN/NOTIFY for real-time updates
+Meeting Audio → Transcription → Backend API → Processing → Summary
+
+                                     ↓- **Extracts** decisions, action items, and key topics                           │
+
+                              ┌──────────────┐
+
+                              │  FastAPI     │- **Provides** final comprehensive summaries when meetings end                           ▼
+
+                              │  REST API    │
+
+                              └──────────────┘                    ┌──────────────┐     ┌─────────────┐
 
                                      ↓
 
-                    ┌────────────────┼────────────────┐## Hardware Requirements
+                    ┌────────────────┼────────────────┐**Key Innovation**: Unlike services that require external APIs (OpenAI, etc.), this runs entirely on your own hardware with local LLM models, giving you complete privacy and control.                    │   Worker     │────▶│  Inference  │
 
                     ↓                ↓                ↓
 
-              ┌──────────┐    ┌──────────┐    ┌──────────┐### Minimum (CPU-only)
+              ┌──────────┐    ┌──────────┐    ┌──────────┐                    │   Queue      │◀────│  Service    │
 
-              │PostgreSQL│    │  Worker  │    │   LLM    │- **CPU**: 8+ cores
+              │PostgreSQL│    │  Worker  │    │   LLM    │
 
-              │ Database │    │  Queue   │    │Inference │- **RAM**: 16 GB
+              │ Database │    │  Queue   │    │Inference │---                    └──────────────┘     └─────────────┘
 
-              └──────────┘    └──────────┘    └──────────┘- **Storage**: 20 GB
+              └──────────┘    └──────────┘    └──────────┘
 
-```- **Model**: Mistral-7B Q4_K_M (~4 GB)
+``````
 
-- **Latency**: 10-30 seconds per chunk
 
-### Core Components
 
-### Recommended (GPU)
+### Core Components## 🏗️ Architecture
 
-1. **FastAPI Server** - REST API + WebSocket for real-time updates- **GPU**: NVIDIA GPU with 10+ GB VRAM (RTX 3080, RTX 4080, A4000, etc.)
 
-2. **Worker Queue** - Background job processor with retry logic- **CPU**: 8+ cores
 
-3. **LLM Inference** - Local llama-cpp-python for AI summarization- **RAM**: 32 GB
+1. **FastAPI Server** - REST API + WebSocket for real-time updates## Features
 
-4. **PostgreSQL** - Persistent storage with pub/sub messaging- **Storage**: 50 GB
+2. **Worker Queue** - Background job processor with retry logic
 
-5. **Chunker** - Intelligent text splitting with sliding windows- **Model**: Mistral-7B Q5_K_M or LLaMA-3 8B Q5_K_M (~6-8 GB)
+3. **LLM Inference** - Local llama-cpp-python for AI summarization```
 
-6. **Merger** - Summary deduplication and consolidation- **Latency**: 2-5 seconds per chunk
+4. **PostgreSQL** - Persistent storage with pub/sub messaging
 
+5. **Chunker** - Intelligent text splitting with sliding windowsMeeting Audio → Transcription → Backend API → Processing → Summary- **Real-time Ingestion**: WebSocket-based streaming of meeting segments
 
+6. **Merger** - Summary deduplication and consolidation
 
----### Optimal (High-throughput)
-
-- **GPU**: NVIDIA GPU with 24+ GB VRAM (RTX 4090, A6000, etc.)
-
-## 🚀 Quick Start- **CPU**: 16+ cores
-
-- **RAM**: 64 GB
-
-### 1. Setup- **Storage**: 100 GB
-
-- **Model**: LLaMA-3 13B Q5_K_M or Mistral 7B Q8 (~12-16 GB)
-
-```bash- **Latency**: 1-3 seconds per chunk
-
-# Clone and navigate
-
-cd backend## Quick Start
-
-
-
-# Run setup script (creates venv, installs dependencies)### 1. Prerequisites
-
-bash setup.sh
-
-```bash
-
-# Or manual setup# Install PostgreSQL
-
-python3 -m venv venvsudo apt install postgresql postgresql-contrib
-
-source venv/bin/activate
-
-pip install -r requirements.txt# Create database
-
-```sudo -u postgres createdb meeting_summarizer
-
-sudo -u postgres createuser meeting_user -P
-
-### 2. Configure
-
-# Grant privileges
-
-```bashsudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE meeting_summarizer TO meeting_user;"
-
-# Copy example config```
-
-cp .env.example .env
-
-### 2. Install Dependencies
-
-# Edit configuration
-
-nano .env```bash
-
-```cd backend/
-
-pip install -r requirements.txt
-
-**Key settings:**
-
-```env# For GPU support (CUDA 12.x)
-
-# API ServerCMAKE_ARGS="-DLLAMA_CUBLAS=on" pip install llama-cpp-python --force-reinstall --no-cache-dir
-
-API_HOST=0.0.0.0
-
-API_PORT=8000# For CPU-only
-
-pip install llama-cpp-python
-
-# Database (for production)```
-
-DATABASE_URL=postgresql://user:pass@localhost:5432/meetings
-
-### 3. Download Model
-
-# LLM Settings
-
-MODEL_PATH=/path/to/model.gguf```bash
-
-INFERENCE_GPU_LAYERS=35  # Set to 0 for CPU-onlymkdir -p /path/to/models
-
-```
-
-# Download Mistral-7B (recommended for GPU with 10GB+ VRAM)
-
-### 3. Run - Development Mode (Quick Testing)wget https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve/main/mistral-7b-instruct-v0.2.Q5_K_M.gguf \
-
-  -O /path/to/models/mistral-7b-instruct-v0.2.Q5_K_M.gguf
-
-```bash
-
-# Start test server (no PostgreSQL needed, uses mock LLM)# OR download smaller model for CPU/low VRAM
-
-python run_test_server.pywget https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf \
-
-  -O /path/to/models/mistral-7b-instruct-v0.2.Q4_K_M.gguf
-
-# In another terminal, test it```
-
-./test_cli.sh
-
-```### 4. Configure
-
-
-
-The test server runs on **http://localhost:8000** with:```bash
-
-- ✅ In-memory storagecp .env.example .env
-
-- ✅ Mock summariesnano .env  # Update with your settings
-
-- ✅ All API endpoints working```
-
-- ✅ Perfect for testing/development
-
-Key settings:
-
-### 4. Run - Production Mode```env
-
-DATABASE_URL=postgresql://meeting_user:your_password@localhost:5432/meeting_summarizer
-
-#### Option A: Quick Start (All-in-one)INFERENCE_MODEL_PATH=/path/to/models/mistral-7b-instruct-v0.2.Q5_K_M.gguf
-
-INFERENCE_GPU_LAYERS=35  # Set to 0 for CPU-only
-
-```bash```
-
-# Start all services
-
-bash setup.sh        # First time only### 5. Run Migrations
-
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-
-``````bash
-
-make migrate
-
-#### Option B: Full Setup (Separate Services)```
-
-
-
-```bash### 6. Start Services
-
-# 1. Start PostgreSQL (if not running)
-
-sudo systemctl start postgresql```bash
-
-# Start all services (API + Worker + Inference)
-
-# 2. Initialize databasemake start-all
-
-source venv/bin/activate
-
-python db/migrate.py# OR start individually in separate terminals:
-
-make start-inference  # Terminal 1
-
-# 3. Start inference servicemake start-worker     # Terminal 2
-
-python inference/serve.py &make start-api        # Terminal 3
-
-```
-
-# 4. Start worker
-
-python workers/worker.py &## API Usage
-
-
-
-# 5. Start API server### Create Meeting
-
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-
-``````bash
-
-curl -X POST http://localhost:8000/meetings \
-
----  -H "Content-Type: application/json" \
-
-  -d '{
-
-## 📚 API Usage    "title": "Q4 Planning Meeting",
-
-    "metadata": {"department": "Engineering", "attendees": 5}
-
-### Create Meeting  }'
-
-
-
-```bash# Response:
-
-curl -X POST http://localhost:8000/meetings \# {
-
-  -H "Content-Type: application/json" \#   "id": "123e4567-e89b-12d3-a456-426614174000",
-
-  -d '{#   "title": "Q4 Planning Meeting",
-
-    "title": "Q4 Planning Meeting",#   "metadata": {...},
-
-    "metadata": {"department": "Engineering"}#   "created_at": "2025-10-31T14:00:00Z",
-
-  }'#   "finalized": false
-
-# }
-
-# Returns: {"id": "meeting-uuid", "title": "Q4 Planning Meeting", ...}```
-
-```
-
-### Ingest Segments
-
-### Add Transcript Segment
-
-```bash
-
-```bashMEETING_ID="123e4567-e89b-12d3-a456-426614174000"
-
-curl -X POST http://localhost:8000/ingest/segment \
-
-  -H "Content-Type: application/json" \curl -X POST http://localhost:8000/ingest/segment \
-
-  -d '{  -H "Content-Type: application/json" \
-
-    "meeting_id": "meeting-uuid",  -d '{
-
-    "speaker": "Alice",    "meeting_id": "'$MEETING_ID'",
-
-    "timestamp_iso": "2025-11-01T14:00:00Z",    "speaker": "Alice",
-
-    "text_segment": "Let us discuss Q4 goals and revenue targets."    "timestamp_iso": "2025-10-31T14:00:00Z",
-
-  }'    "text_segment": "Let'\''s discuss our Q4 goals and budget allocation."
-
-```  }'
-
-
-
-### Get Current Summary# Response:
-
-# {
-
-```bash#   "segment_id": "223e4567-e89b-12d3-a456-426614174001",
-
-curl http://localhost:8000/meetings/meeting-uuid/summary#   "status": "accepted"
-
-```# }
-
-```
-
-**Response:**
-
-```json### WebSocket Stream
-
-{
-
-  "id": "summary-uuid",```javascript
-
-  "type": "incremental",// JavaScript client example
-
-  "content": {const ws = new WebSocket(`ws://localhost:8000/meetings/${meetingId}/stream`);
-
-    "summary": "Team discussed Q4 goals...",
-
-    "decisions": [ws.onmessage = (event) => {
-
-      {"text": "Hire 3 engineers", "confidence": 0.95}  const data = JSON.parse(event.data);
-
-    ],  console.log('Summary update:', data);
-
-    "action_items": [};
-
-      {
-
-        "text": "Prepare job descriptions",ws.onerror = (error) => {
-
-        "owner": "Alice",  console.error('WebSocket error:', error);
-
-        "due_date_iso": "2025-11-07",};
-
-        "confidence": 0.9```
-
-      }
-
-    ],### Get Summary
-
-    "topics": [
-
-      {"name": "Hiring", "confidence": 0.95}```bash
-
-    ]curl http://localhost:8000/meetings/$MEETING_ID/summary
-
-  }
-
-}# Response:
-
-```# {
-
-#   "id": "323e4567-e89b-12d3-a456-426614174002",
-
-### Finalize Meeting#   "meeting_id": "123e4567-e89b-12d3-a456-426614174000",
-
-#   "type": "incremental",
-
-```bash#   "content": {
-
-# Mark meeting as complete#     "summary": "Discussion about Q4 goals and budget",
-
-curl -X POST http://localhost:8000/meetings/meeting-uuid/finalize#     "decisions": [
-
-#       {"text": "Allocate 40% to engineering", "confidence": 0.9}
-
-# Wait 3 seconds for final summary generation#     ],
-
-sleep 3#     "action_items": [
-
-#       {
-
-# Get final summary#         "text": "Prepare budget breakdown",
-
-curl http://localhost:8000/meetings/meeting-uuid/summary#         "owner": "Bob",
-
-```#         "due_date_iso": "2025-11-07",
-
-#         "confidence": 0.85
-
-### WebSocket (Real-time Updates)#       }
-
-#     ],
-
-```javascript#     "topics": [
-
-const ws = new WebSocket('ws://localhost:8000/ws/meeting-uuid');#       {"name": "Budget Planning", "confidence": 0.95}
-
-#     ]
-
-ws.onmessage = (event) => {#   },
-
-  const data = JSON.parse(event.data);#   "created_at": "2025-10-31T14:05:00Z"
-
-  console.log('Update:', data.type); // 'segment_added', 'summary_update', etc.# }
-
-};```
-
-```
-
-### Finalize Meeting
+                                     ↓- **Async Summarization**: Background workers with retry logic and exponential backoff
 
 ---
 
+                              ┌──────────────┐- **Chunking**: Sliding window with 10-20% overlap for context preservation
+
+## 🚀 Quick Start
+
+                              │  FastAPI     │- **Local LLM**: llama.cpp-based inference with GPU acceleration
+
+### 1. Setup
+
+                              │  REST API    │- **Structured Output**: JSON summaries with action items, decisions, topics
+
 ```bash
 
-## 🧪 Testingcurl -X POST http://localhost:8000/meetings/$MEETING_ID/finalize
+# Clone and navigate                              └──────────────┘- **Incremental Updates**: PostgreSQL LISTEN/NOTIFY for real-time updates
+
+cd backend
+
+                                     ↓
+
+# Run setup script (creates venv, installs dependencies)
+
+bash setup.sh                    ┌────────────────┼────────────────┐## Hardware Requirements
 
 
 
-### Automated CLI Test# Response:
+# Or manual setup                    ↓                ↓                ↓
 
-# {
+python3 -m venv venv
 
-```bash#   "status": "finalized",
+source venv/bin/activate              ┌──────────┐    ┌──────────┐    ┌──────────┐### Minimum (CPU-only)
 
-# Run complete test flow#   "meeting_id": "123e4567-e89b-12d3-a456-426614174000"
+pip install -r requirements.txt
 
-./test_cli.sh# }
+```              │PostgreSQL│    │  Worker  │    │   LLM    │- **CPU**: 8+ cores
+
+
+
+### 2. Configure              │ Database │    │  Queue   │    │Inference │- **RAM**: 16 GB
+
+
+
+```bash              └──────────┘    └──────────┘    └──────────┘- **Storage**: 20 GB
+
+# Copy example config
+
+cp .env.example .env```- **Model**: Mistral-7B Q4_K_M (~4 GB)
+
+
+
+# Edit configuration- **Latency**: 10-30 seconds per chunk
+
+nano .env
+
+```### Core Components
+
+
+
+**Key settings:**### Recommended (GPU)
+
+```env
+
+# API Server1. **FastAPI Server** - REST API + WebSocket for real-time updates- **GPU**: NVIDIA GPU with 10+ GB VRAM (RTX 3080, RTX 4080, A4000, etc.)
+
+API_HOST=0.0.0.0
+
+API_PORT=80002. **Worker Queue** - Background job processor with retry logic- **CPU**: 8+ cores
+
+
+
+# Database (for production)3. **LLM Inference** - Local llama-cpp-python for AI summarization- **RAM**: 32 GB
+
+DATABASE_URL=postgresql://user:pass@localhost:5432/meetings
+
+4. **PostgreSQL** - Persistent storage with pub/sub messaging- **Storage**: 50 GB
+
+# LLM Settings
+
+MODEL_PATH=/path/to/model.gguf5. **Chunker** - Intelligent text splitting with sliding windows- **Model**: Mistral-7B Q5_K_M or LLaMA-3 8B Q5_K_M (~6-8 GB)
+
+INFERENCE_GPU_LAYERS=35  # Set to 0 for CPU-only
+
+```6. **Merger** - Summary deduplication and consolidation- **Latency**: 2-5 seconds per chunk
+
+
+
+### 3. Run - Development Mode (Quick Testing)
+
+
+
+```bash---### Optimal (High-throughput)
+
+# Start test server (no PostgreSQL needed, uses mock LLM)
+
+python run_test_server.py- **GPU**: NVIDIA GPU with 24+ GB VRAM (RTX 4090, A6000, etc.)
+
+
+
+# In another terminal, test it## 🚀 Quick Start- **CPU**: 16+ cores
+
+./test_cli.sh
+
+```- **RAM**: 64 GB
+
+
+
+The test server runs on **http://localhost:8000** with:### 1. Setup- **Storage**: 100 GB
+
+- ✅ In-memory storage
+
+- ✅ Mock summaries- **Model**: LLaMA-3 13B Q5_K_M or Mistral 7B Q8 (~12-16 GB)
+
+- ✅ All API endpoints working
+
+- ✅ Perfect for testing/development```bash- **Latency**: 1-3 seconds per chunk
+
+
+
+### 4. Run - Production Mode# Clone and navigate
+
+
+
+#### Option A: Quick Start (All-in-one)cd backend## Quick Start
+
+
+
+```bash
+
+# Start all services
+
+bash setup.sh        # First time only# Run setup script (creates venv, installs dependencies)### 1. Prerequisites
+
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+```bash setup.sh
+
+
+
+#### Option B: Full Setup (Separate Services)```bash
+
+
+
+```bash# Or manual setup# Install PostgreSQL
+
+# 1. Start PostgreSQL (if not running)
+
+sudo systemctl start postgresqlpython3 -m venv venvsudo apt install postgresql postgresql-contrib
+
+
+
+# 2. Initialize databasesource venv/bin/activate
+
+source venv/bin/activate
+
+python db/migrate.pypip install -r requirements.txt# Create database
+
+
+
+# 3. Start inference service```sudo -u postgres createdb meeting_summarizer
+
+python inference/serve.py &
+
+sudo -u postgres createuser meeting_user -P
+
+# 4. Start worker
+
+python workers/worker.py &### 2. Configure
+
+
+
+# 5. Start API server# Grant privileges
+
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+``````bashsudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE meeting_summarizer TO meeting_user;"
+
+
+
+---# Copy example config```
+
+
+
+## 📚 API Usagecp .env.example .env
+
+
+
+### Create Meeting### 2. Install Dependencies
+
+
+
+```bash# Edit configuration
+
+curl -X POST http://localhost:8000/meetings \
+
+  -H "Content-Type: application/json" \nano .env```bash
+
+  -d '{
+
+    "title": "Q4 Planning Meeting",```cd backend/
+
+    "metadata": {"department": "Engineering"}
+
+  }'pip install -r requirements.txt
+
+
+
+# Returns: {"id": "meeting-uuid", "title": "Q4 Planning Meeting", ...}**Key settings:**
 
 ```
 
-# This will:
+```env# For GPU support (CUDA 12.x)
 
-# 1. Check health### Health Check
+### Add Transcript Segment
 
-# 2. Create meeting
+# API ServerCMAKE_ARGS="-DLLAMA_CUBLAS=on" pip install llama-cpp-python --force-reinstall --no-cache-dir
 
-# 3. Add 5 segments```bash
+```bash
 
-# 4. Get summarycurl http://localhost:8000/healthz
+curl -X POST http://localhost:8000/ingest/segment \API_HOST=0.0.0.0
 
-# 5. Finalize
+  -H "Content-Type: application/json" \
 
-# 6. Get final summary# Response:
+  -d '{API_PORT=8000# For CPU-only
 
-```# {
+    "meeting_id": "meeting-uuid",
 
-#   "status": "healthy",
+    "speaker": "Alice",pip install llama-cpp-python
 
-### Frontend UI Testing#   "database": "healthy",
+    "timestamp_iso": "2025-11-01T14:00:00Z",
 
-#   "redis": "healthy",
+    "text_segment": "Let us discuss Q4 goals and revenue targets."# Database (for production)```
 
-```bash#   "inference": "healthy",
+  }'
 
-# Start frontend server#   "timestamp": "2025-10-31T14:10:00Z"
+```DATABASE_URL=postgresql://user:pass@localhost:5432/meetings
 
-./restart_servers.sh# }
+
+
+### Get Current Summary### 3. Download Model
+
+
+
+```bash# LLM Settings
+
+curl http://localhost:8000/meetings/meeting-uuid/summary
+
+```MODEL_PATH=/path/to/model.gguf```bash
+
+
+
+**Response:**INFERENCE_GPU_LAYERS=35  # Set to 0 for CPU-onlymkdir -p /path/to/models
+
+```json
+
+{```
+
+  "id": "summary-uuid",
+
+  "type": "incremental",# Download Mistral-7B (recommended for GPU with 10GB+ VRAM)
+
+  "content": {
+
+    "summary": "Team discussed Q4 goals...",### 3. Run - Development Mode (Quick Testing)wget https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve/main/mistral-7b-instruct-v0.2.Q5_K_M.gguf \
+
+    "decisions": [
+
+      {"text": "Hire 3 engineers", "confidence": 0.95}  -O /path/to/models/mistral-7b-instruct-v0.2.Q5_K_M.gguf
+
+    ],
+
+    "action_items": [```bash
+
+      {
+
+        "text": "Prepare job descriptions",# Start test server (no PostgreSQL needed, uses mock LLM)# OR download smaller model for CPU/low VRAM
+
+        "owner": "Alice",
+
+        "due_date_iso": "2025-11-07",python run_test_server.pywget https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf \
+
+        "confidence": 0.9
+
+      }  -O /path/to/models/mistral-7b-instruct-v0.2.Q4_K_M.gguf
+
+    ],
+
+    "topics": [# In another terminal, test it```
+
+      {"name": "Hiring", "confidence": 0.95}
+
+    ]./test_cli.sh
+
+  }
+
+}```### 4. Configure
 
 ```
 
-# Opens on http://localhost:8080/
 
-# - Create meetings via UI## Testing
 
-# - Add segments with quick buttons
+### Finalize Meeting
 
-# - View live summaries### Run All Tests
+The test server runs on **http://localhost:8000** with:```bash
 
-# - Test WebSocket updates
+```bash
+
+# Mark meeting as complete- ✅ In-memory storagecp .env.example .env
+
+curl -X POST http://localhost:8000/meetings/meeting-uuid/finalize
+
+- ✅ Mock summariesnano .env  # Update with your settings
+
+# Wait 3 seconds for final summary generation
+
+sleep 3- ✅ All API endpoints working```
+
+
+
+# Get final summary- ✅ Perfect for testing/development
+
+curl http://localhost:8000/meetings/meeting-uuid/summary
+
+```Key settings:
+
+
+
+### WebSocket (Real-time Updates)### 4. Run - Production Mode```env
+
+
+
+```javascriptDATABASE_URL=postgresql://meeting_user:your_password@localhost:5432/meeting_summarizer
+
+const ws = new WebSocket('ws://localhost:8000/ws/meeting-uuid');
+
+#### Option A: Quick Start (All-in-one)INFERENCE_MODEL_PATH=/path/to/models/mistral-7b-instruct-v0.2.Q5_K_M.gguf
+
+ws.onmessage = (event) => {
+
+  const data = JSON.parse(event.data);INFERENCE_GPU_LAYERS=35  # Set to 0 for CPU-only
+
+  console.log('Update:', data.type); // 'segment_added', 'summary_update', etc.
+
+};```bash```
+
+```
+
+# Start all services
+
+---
+
+bash setup.sh        # First time only### 5. Run Migrations
+
+## 🧪 Testing
+
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+### Automated CLI Test
 
 ``````bash
 
-make test
+```bash
 
-### Manual Testing```
+# Run complete test flowmake migrate
+
+./test_cli.sh
+
+#### Option B: Full Setup (Separate Services)```
+
+# This will:
+
+# 1. Check health
+
+# 2. Create meeting
+
+# 3. Add 5 segments```bash### 6. Start Services
+
+# 4. Get summary
+
+# 5. Finalize# 1. Start PostgreSQL (if not running)
+
+# 6. Get final summary
+
+```sudo systemctl start postgresql```bash
 
 
 
-```bash### Run Unit Tests Only
+### Frontend UI Testing# Start all services (API + Worker + Inference)
 
-# Health check
 
-curl http://localhost:8000/healthz```bash
 
-make test-unit
+```bash# 2. Initialize databasemake start-all
 
-# View API docs```
+# Start frontend server
+
+./restart_servers.shsource venv/bin/activate
+
+
+
+# Opens on http://localhost:8080/python db/migrate.py# OR start individually in separate terminals:
+
+# - Create meetings via UI
+
+# - Add segments with quick buttonsmake start-inference  # Terminal 1
+
+# - View live summaries
+
+# - Test WebSocket updates# 3. Start inference servicemake start-worker     # Terminal 2
+
+```
+
+python inference/serve.py &make start-api        # Terminal 3
+
+### Manual Testing
+
+```
+
+```bash
+
+# Health check# 4. Start worker
+
+curl http://localhost:8000/healthz
+
+python workers/worker.py &## API Usage
+
+# View API docs
 
 xdg-open http://localhost:8000/docs
 
-```### Run Integration Tests
+```
 
+# 5. Start API server### Create Meeting
 
+---
 
----```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
 
-# Ensure services are running first
+## 📦 Project Structure
 
-## 📦 Project Structuremake start-all
+``````bash
 
+```
 
+backend/curl -X POST http://localhost:8000/meetings \
 
-```# In another terminal:
+├── app/                    # FastAPI application
 
-backend/make test-integration
+│   ├── main.py            # Main API server---  -H "Content-Type: application/json" \
 
-├── app/                    # FastAPI application```
+│   ├── notifications.py   # WebSocket & pub/sub
 
-│   ├── main.py            # Main API server
-
-│   ├── notifications.py   # WebSocket & pub/sub### Manual Integration Test
-
-│   └── setup_logging.py   # Logging configuration
-
-│```bash
-
-├── workers/               # Background processingpython tests/integration/test_full_flow.py
-
-│   ├── worker.py         # Job processor```
-
-│   ├── chunker.py        # Text chunking
-
-│   └── merger.py         # Summary merging## Development
+│   └── setup_logging.py   # Logging configuration  -d '{
 
 │
 
-├── inference/            # LLM service### Format Code
+├── workers/               # Background processing## 📚 API Usage    "title": "Q4 Planning Meeting",
+
+│   ├── worker.py         # Job processor
+
+│   ├── chunker.py        # Text chunking    "metadata": {"department": "Engineering", "attendees": 5}
+
+│   └── merger.py         # Summary merging
+
+│### Create Meeting  }'
+
+├── inference/            # LLM service
 
 │   └── serve.py         # llama-cpp inference
 
-│```bash
+│
 
-├── db/                   # Database layermake format
+├── db/                   # Database layer```bash# Response:
 
-│   ├── connection.py    # DB connection pool```
+│   ├── connection.py    # DB connection pool
+
+│   ├── repositories.py  # CRUD operationscurl -X POST http://localhost:8000/meetings \# {
+
+│   └── migrations/      # SQL migrations
+
+│  -H "Content-Type: application/json" \#   "id": "123e4567-e89b-12d3-a456-426614174000",
+
+├── models/              # Data models
+
+│   └── schemas.py       # Pydantic models  -d '{#   "title": "Q4 Planning Meeting",
+
+│
+
+├── config/              # Configuration    "title": "Q4 Planning Meeting",#   "metadata": {...},
+
+│   └── settings.py      # Environment settings
+
+│    "metadata": {"department": "Engineering"}#   "created_at": "2025-10-31T14:00:00Z",
+
+├── tests/               # Test suite
+
+│   ├── unit/           # Unit tests  }'#   "finalized": false
+
+│   └── integration/    # Integration tests
+
+│# }
+
+├── frontend/           # Web UI for testing
+
+│   └── index.html     # Browser interface# Returns: {"id": "meeting-uuid", "title": "Q4 Planning Meeting", ...}```
+
+│
+
+├── examples/           # Usage examples```
+
+│   ├── curl_examples.sh
+
+│   └── websocket_client.py### Ingest Segments
+
+│
+
+├── run_test_server.py  # Development server (no DB needed)### Add Transcript Segment
+
+├── test_cli.sh         # Automated CLI tests
+
+├── restart_servers.sh  # Server management```bash
+
+├── setup.sh           # Initial setup
+
+├── verify.sh          # Health checks```bashMEETING_ID="123e4567-e89b-12d3-a456-426614174000"
+
+└── requirements.txt   # Python dependencies
+
+```curl -X POST http://localhost:8000/ingest/segment \
+
+
+
+---  -H "Content-Type: application/json" \curl -X POST http://localhost:8000/ingest/segment \
+
+
+
+## 🔧 Configuration  -d '{  -H "Content-Type: application/json" \
+
+
+
+### Environment Variables    "meeting_id": "meeting-uuid",  -d '{
+
+
+
+```bash    "speaker": "Alice",    "meeting_id": "'$MEETING_ID'",
+
+# API Server
+
+API_HOST=0.0.0.0              # Listen address    "timestamp_iso": "2025-11-01T14:00:00Z",    "speaker": "Alice",
+
+API_PORT=8000                 # API port
+
+API_WORKERS=4                 # Uvicorn workers    "text_segment": "Let us discuss Q4 goals and revenue targets."    "timestamp_iso": "2025-10-31T14:00:00Z",
+
+
+
+# Database  }'    "text_segment": "Let'\''s discuss our Q4 goals and budget allocation."
+
+DATABASE_URL=postgresql://user:pass@localhost:5432/meetings
+
+DB_POOL_SIZE=20              # Connection pool size```  }'
+
+
+
+# Redis (optional, for job queue)
+
+REDIS_URL=redis://localhost:6379/0
+
+### Get Current Summary# Response:
+
+# LLM Inference
+
+MODEL_PATH=/path/to/model.gguf# {
+
+INFERENCE_PORT=8001
+
+INFERENCE_GPU_LAYERS=35      # GPU layers (0 = CPU only)```bash#   "segment_id": "223e4567-e89b-12d3-a456-426614174001",
+
+INFERENCE_CONTEXT_SIZE=4096
+
+INFERENCE_BATCH_SIZE=512curl http://localhost:8000/meetings/meeting-uuid/summary#   "status": "accepted"
+
+
+
+# Worker```# }
+
+WORKER_BATCH_SIZE=2000       # Tokens per batch
+
+WORKER_BATCH_TIMEOUT=45      # Seconds```
+
+WORKER_MAX_RETRIES=3
+
+WORKER_RETRY_DELAY=5**Response:**
+
+```
+
+```json### WebSocket Stream
+
+---
+
+{
+
+## 🖥️ Hardware Requirements
+
+  "id": "summary-uuid",```javascript
+
+### Minimum (CPU-only)
+
+- **CPU**: 8+ cores  "type": "incremental",// JavaScript client example
+
+- **RAM**: 16 GB
+
+- **Storage**: 20 GB  "content": {const ws = new WebSocket(`ws://localhost:8000/meetings/${meetingId}/stream`);
+
+- **Model**: Mistral-7B Q4_K_M (~4 GB)
+
+- **Latency**: 10-30 seconds per chunk    "summary": "Team discussed Q4 goals...",
+
+
+
+### Recommended (GPU)    "decisions": [ws.onmessage = (event) => {
+
+- **GPU**: NVIDIA GPU with 10+ GB VRAM (RTX 3080+)
+
+- **CPU**: 8+ cores      {"text": "Hire 3 engineers", "confidence": 0.95}  const data = JSON.parse(event.data);
+
+- **RAM**: 32 GB
+
+- **Storage**: 50 GB    ],  console.log('Summary update:', data);
+
+- **Model**: Mistral-7B Q5_K_M (~6 GB)
+
+- **Latency**: 2-5 seconds per chunk    "action_items": [};
+
+
+
+### Optimal (Production)      {
+
+- **GPU**: NVIDIA GPU with 24+ GB VRAM (RTX 4090, A6000)
+
+- **CPU**: 16+ cores        "text": "Prepare job descriptions",ws.onerror = (error) => {
+
+- **RAM**: 64 GB
+
+- **Storage**: 100 GB        "owner": "Alice",  console.error('WebSocket error:', error);
+
+- **Model**: LLaMA-3 8B or Mistral-7B
+
+- **Latency**: 1-3 seconds per chunk        "due_date_iso": "2025-11-07",};
+
+
+
+---        "confidence": 0.9```
+
+
+
+## 🗄️ Database Setup      }
+
+
+
+### PostgreSQL Installation    ],### Get Summary
+
+
+
+```bash    "topics": [
+
+# Ubuntu/Debian
+
+sudo apt install postgresql postgresql-contrib      {"name": "Hiring", "confidence": 0.95}```bash
+
+
+
+# macOS    ]curl http://localhost:8000/meetings/$MEETING_ID/summary
+
+brew install postgresql
+
+  }
+
+# Start service
+
+sudo systemctl start postgresql}# Response:
+
+sudo systemctl enable postgresql
+
+``````# {
+
+
+
+### Database Creation#   "id": "323e4567-e89b-12d3-a456-426614174002",
+
+
+
+```bash### Finalize Meeting#   "meeting_id": "123e4567-e89b-12d3-a456-426614174000",
+
+# Create user and database
+
+sudo -u postgres psql#   "type": "incremental",
+
+
+
+CREATE USER meeting_user WITH PASSWORD 'your_password';```bash#   "content": {
+
+CREATE DATABASE meetings OWNER meeting_user;
+
+\q# Mark meeting as complete#     "summary": "Discussion about Q4 goals and budget",
+
+
+
+# Update .env with connection stringcurl -X POST http://localhost:8000/meetings/meeting-uuid/finalize#     "decisions": [
+
+DATABASE_URL=postgresql://meeting_user:your_password@localhost:5432/meetings
+
+```#       {"text": "Allocate 40% to engineering", "confidence": 0.9}
+
+
+
+### Run Migrations# Wait 3 seconds for final summary generation#     ],
+
+
+
+```bashsleep 3#     "action_items": [
+
+source venv/bin/activate
+
+python db/migrate.py#       {
+
+```
+
+# Get final summary#         "text": "Prepare budget breakdown",
+
+---
+
+curl http://localhost:8000/meetings/meeting-uuid/summary#         "owner": "Bob",
+
+## 🤖 LLM Model Setup
+
+```#         "due_date_iso": "2025-11-07",
+
+### Download Model
+
+#         "confidence": 0.85
+
+```bash
+
+# Create models directory### WebSocket (Real-time Updates)#       }
+
+mkdir -p models
+
+#     ],
+
+# Download model (example: Mistral-7B)
+
+cd models```javascript#     "topics": [
+
+wget https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve/main/mistral-7b-instruct-v0.2.Q5_K_M.gguf
+
+const ws = new WebSocket('ws://localhost:8000/ws/meeting-uuid');#       {"name": "Budget Planning", "confidence": 0.95}
+
+# Update .env
+
+MODEL_PATH=/absolute/path/to/backend/models/mistral-7b-instruct-v0.2.Q5_K_M.gguf#     ]
+
+```
+
+ws.onmessage = (event) => {#   },
+
+### Recommended Models
+
+  const data = JSON.parse(event.data);#   "created_at": "2025-10-31T14:05:00Z"
+
+| Model | Size | VRAM | Quality | Speed |
+
+|-------|------|------|---------|-------|  console.log('Update:', data.type); // 'segment_added', 'summary_update', etc.# }
+
+| Mistral-7B Q4_K_M | 4.4 GB | 6 GB | Good | Fast |
+
+| Mistral-7B Q5_K_M | 5.7 GB | 8 GB | Better | Medium |};```
+
+| LLaMA-3 8B Q4_K_M | 4.9 GB | 8 GB | Good | Fast |
+
+| LLaMA-3 8B Q5_K_M | 6.3 GB | 10 GB | Excellent | Medium |```
+
+
+
+---### Finalize Meeting
+
+
+
+## 🐛 Troubleshooting---
+
+
+
+### Server Not Starting```bash
+
+
+
+```bash## 🧪 Testingcurl -X POST http://localhost:8000/meetings/$MEETING_ID/finalize
+
+# Check if port is in use
+
+sudo netstat -tuln | grep 8000
+
+
+
+# Kill existing process### Automated CLI Test# Response:
+
+pkill -f run_test_server
+
+pkill -f uvicorn# {
+
+
+
+# Check logs```bash#   "status": "finalized",
+
+tail -f server.log
+
+```# Run complete test flow#   "meeting_id": "123e4567-e89b-12d3-a456-426614174000"
+
+
+
+### Database Connection Error./test_cli.sh# }
+
+
+
+```bash```
+
+# Check PostgreSQL is running
+
+sudo systemctl status postgresql# This will:
+
+
+
+# Test connection# 1. Check health### Health Check
+
+psql -U meeting_user -d meetings -h localhost
+
+# 2. Create meeting
+
+# Check DATABASE_URL in .env
+
+```# 3. Add 5 segments```bash
+
+
+
+### LLM Inference Slow# 4. Get summarycurl http://localhost:8000/healthz
+
+
+
+```bash# 5. Finalize
+
+# Check GPU is being used
+
+nvidia-smi# 6. Get final summary# Response:
+
+
+
+# Increase GPU layers in .env```# {
+
+INFERENCE_GPU_LAYERS=35  # Increase this number
+
+#   "status": "healthy",
+
+# Use smaller/quantized model
+
+# Q4_K_M is faster than Q5_K_M### Frontend UI Testing#   "database": "healthy",
+
+```
+
+#   "redis": "healthy",
+
+### Out of Memory
+
+```bash#   "inference": "healthy",
+
+```bash
+
+# Reduce context size# Start frontend server#   "timestamp": "2025-10-31T14:10:00Z"
+
+INFERENCE_CONTEXT_SIZE=2048  # Down from 4096
+
+./restart_servers.sh# }
+
+# Reduce batch size
+
+WORKER_BATCH_SIZE=1000  # Down from 2000```
+
+
+
+# Use smaller model (Q4 instead of Q5)# Opens on http://localhost:8080/
+
+```
+
+# - Create meetings via UI## Testing
+
+---
+
+# - Add segments with quick buttons
+
+## 📊 Performance Tips
+
+# - View live summaries### Run All Tests
+
+### For Development
+
+- Use `run_test_server.py` (no DB, mock LLM)# - Test WebSocket updates
+
+- Quick iteration and testing
+
+- No GPU needed``````bash
+
+
+
+### For Productionmake test
+
+- Use PostgreSQL for persistence
+
+- Enable GPU acceleration### Manual Testing```
+
+- Run worker pool (multiple worker instances)
+
+- Use Redis for better job queue performance
+
+- Monitor with Prometheus/Grafana
+
+```bash### Run Unit Tests Only
+
+### Scaling
+
+```bash# Health check
+
+# Run multiple workers
+
+python workers/worker.py &curl http://localhost:8000/healthz```bash
+
+python workers/worker.py &
+
+python workers/worker.py &make test-unit
+
+
+
+# Run API with multiple workers# View API docs```
+
+uvicorn app.main:app --workers 4 --host 0.0.0.0 --port 8000
+
+```xdg-open http://localhost:8000/docs
+
+
+
+---```### Run Integration Tests
+
+
+
+## 🔐 Security Notes
+
+
+
+- **Local Processing**: All data stays on your infrastructure---```bash
+
+- **No External APIs**: LLM runs locally
+
+- **Authentication**: Add JWT/OAuth as needed (extensible)# Ensure services are running first
+
+- **HTTPS**: Use reverse proxy (nginx/traefik) in production
+
+- **Database**: Use strong passwords, limit network access## 📦 Project Structuremake start-all
+
+
+
+---
+
+
+
+## 📝 API Endpoints```# In another terminal:
+
+
+
+| Method | Endpoint | Description |backend/make test-integration
+
+|--------|----------|-------------|
+
+| GET | `/healthz` | Health check |├── app/                    # FastAPI application```
+
+| GET | `/docs` | Interactive API documentation |
+
+| POST | `/meetings` | Create new meeting |│   ├── main.py            # Main API server
+
+| POST | `/ingest/segment` | Add transcript segment |
+
+| GET | `/meetings/{id}/summary` | Get current/final summary |│   ├── notifications.py   # WebSocket & pub/sub### Manual Integration Test
+
+| POST | `/meetings/{id}/finalize` | Mark meeting complete |
+
+| WS | `/ws/{id}` | WebSocket for real-time updates |│   └── setup_logging.py   # Logging configuration
+
+
+
+---│```bash
+
+
+
+## 🎓 Use Cases├── workers/               # Background processingpython tests/integration/test_full_flow.py
+
+
+
+- **Corporate**: Board meetings, standups, planning sessions│   ├── worker.py         # Job processor```
+
+- **Education**: Lectures, student discussions
+
+- **Healthcare**: Consultations, medical rounds│   ├── chunker.py        # Text chunking
+
+- **Legal**: Depositions, client meetings
+
+- **Remote Work**: Zoom/Teams meeting notes│   └── merger.py         # Summary merging## Development
+
+
+
+---│
+
+
+
+## 📦 Dependencies├── inference/            # LLM service### Format Code
+
+
+
+- **Python**: 3.10+│   └── serve.py         # llama-cpp inference
+
+- **FastAPI**: Web framework
+
+- **PostgreSQL**: Database (production)│```bash
+
+- **llama-cpp-python**: LLM inference
+
+- **Uvicorn**: ASGI server├── db/                   # Database layermake format
+
+- **AsyncPG**: Async PostgreSQL driver
+
+- **Pydantic**: Data validation│   ├── connection.py    # DB connection pool```
+
+- **Redis**: Optional job queue
 
 │   ├── repositories.py  # CRUD operations
 
+---
+
 │   └── migrations/      # SQL migrations### Lint Code
+
+## 🤝 Contributing
 
 │
 
-├── models/              # Data models```bash
+1. Fork the repository
 
-│   └── schemas.py       # Pydantic modelsmake lint
+2. Create feature branch├── models/              # Data models```bash
+
+3. Make changes
+
+4. Run tests: `pytest tests/`│   └── schemas.py       # Pydantic modelsmake lint
+
+5. Submit pull request
 
 │```
 
+---
+
 ├── config/              # Configuration
+
+## 📄 License
 
 │   └── settings.py      # Environment settings### Clean Cache
 
+See LICENSE file in repository root.
+
 │
+
+---
 
 ├── tests/               # Test suite```bash
 
+## 🚀 Quick Commands Reference
+
 │   ├── unit/           # Unit testsmake clean
 
-│   └── integration/    # Integration tests```
+```bash
+
+# Setup│   └── integration/    # Integration tests```
+
+bash setup.sh
 
 │
 
-├── frontend/           # Web UI for testing## Configuration Reference
+# Start development server
 
-│   └── index.html     # Browser interface
+python run_test_server.py├── frontend/           # Web UI for testing## Configuration Reference
 
-│| Variable | Default | Description |
+
+
+# Start production services│   └── index.html     # Browser interface
+
+python inference/serve.py &
+
+python workers/worker.py &│| Variable | Default | Description |
+
+uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ├── examples/           # Usage examples|----------|---------|-------------|
 
-│   ├── curl_examples.sh| `DATABASE_URL` | `postgresql://...` | PostgreSQL connection string |
+# Test
+
+./test_cli.sh│   ├── curl_examples.sh| `DATABASE_URL` | `postgresql://...` | PostgreSQL connection string |
+
+curl http://localhost:8000/healthz
 
 │   └── websocket_client.py| `REDIS_URL` | `redis://localhost:6379/0` | Redis connection string |
 
-│| `API_HOST` | `127.0.0.1` | FastAPI bind address |
+# Stop services
 
-├── run_test_server.py  # Development server (no DB needed)| `API_PORT` | `8000` | FastAPI port |
+pkill -f run_test_server│| `API_HOST` | `127.0.0.1` | FastAPI bind address |
 
-├── test_cli.sh         # Automated CLI tests| `INFERENCE_HOST` | `127.0.0.1` | Inference service host |
+pkill -f uvicorn
 
-├── restart_servers.sh  # Server management| `INFERENCE_PORT` | `8001` | Inference service port |
+pkill -f worker.py├── run_test_server.py  # Development server (no DB needed)| `API_PORT` | `8000` | FastAPI port |
 
-├── setup.sh           # Initial setup| `INFERENCE_MODEL_PATH` | `/models/...` | Path to GGUF model file |
+pkill -f serve.py
+
+```├── test_cli.sh         # Automated CLI tests| `INFERENCE_HOST` | `127.0.0.1` | Inference service host |
+
+
+
+---├── restart_servers.sh  # Server management| `INFERENCE_PORT` | `8001` | Inference service port |
+
+
+
+**Happy Meeting Summarizing! 🎉**├── setup.sh           # Initial setup| `INFERENCE_MODEL_PATH` | `/models/...` | Path to GGUF model file |
+
 
 ├── verify.sh          # Health checks| `INFERENCE_GPU_LAYERS` | `35` | Number of layers to offload to GPU (0 for CPU) |
 
