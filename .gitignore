@@ -25,5 +25,9 @@
 *.tsbuildinfo
 next-env.d.ts
 
-venv
-.venv
+*/venv/*
+*/.venv/*
+*/models/*
+mistral*
+__pycache__
+*.log
