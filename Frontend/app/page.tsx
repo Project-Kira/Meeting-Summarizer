@@ -65,11 +65,11 @@ export default function Home() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-emerald-400 to-green-600 bg-clip-text text-transparent">
+          <h1 className="text-6xl md:text-8xl font-bold text-gradient">
             Project Keera
           </h1>
           <motion.p 
-            className="text-2xl md:text-3xl text-emerald-400 font-light"
+            className="text-2xl md:text-3xl text-accent font-light"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -77,7 +77,7 @@ export default function Home() {
             30 Days, 30 AI Solutions
           </motion.p>
           <motion.div 
-            className="w-24 h-1 bg-gradient-to-r from-emerald-400 to-green-600 mx-auto rounded-full"
+            className="w-24 h-1 btn-primary mx-auto rounded-full"
             initial={{ width: 0 }}
             animate={{ width: 96 }}
             transition={{ delay: 0.6, duration: 0.8 }}
@@ -94,7 +94,7 @@ export default function Home() {
           {['Social Media', 'SMEs', 'Education Tech', 'Real Estate Tech', 'Health Care Tech'].map((domain, i) => (
             <motion.span
               key={domain}
-              className="px-6 py-2 border border-emerald-500/30 rounded-full text-emerald-300 hover:border-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all duration-300 cursor-default"
+              className="tag"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1 + i * 0.1 }}
@@ -110,7 +110,7 @@ export default function Home() {
       <AboutSection />
 
       {/* Team Section */}
-      <section className="py-20 px-4" id="team">
+      <section className="section" id="team">
         <motion.div 
           className="max-w-7xl mx-auto"
           initial="hidden"
@@ -118,10 +118,10 @@ export default function Home() {
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeIn}
         >
-          <h2 className="text-5xl md:text-6xl font-bold text-center mb-4 bg-gradient-to-r from-emerald-400 to-green-600 bg-clip-text text-transparent">
+          <h2 className="section-title">
             Meet the Team
           </h2>
-          <p className="text-center text-gray-400 mb-16 text-lg">
+          <p className="section-subtitle">
             Four developers, one mission: push the boundaries of AI
           </p>
           
@@ -137,8 +137,8 @@ export default function Home() {
       <ContactSection />
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t border-emerald-500/20">
-        <div className="max-w-7xl mx-auto text-center text-gray-500">
+      <footer className="py-8 px-4 border-t border-primary">
+        <div className="max-w-7xl mx-auto text-center text-secondary">
           <p>© 2024 Project Keera. Building the future, one AI solution at a time.</p>
         </div>
       </footer>
