@@ -15,3 +15,10 @@ python-multipart>=0.0.6
 
 # Environment variable support
 python-dotenv>=1.0.0
+
+# Audio processing
+openai-whisper>=20231117
+ffmpeg-python>=0.2.0
+
+# File system monitoring
+watchdog>=3.0.0
