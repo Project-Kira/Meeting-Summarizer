@@ -3,13 +3,13 @@ Inference module for running local LLM using llama-cpp-python.
 Loads a GGUF model and provides text generation capabilities.
 """
 
-import logging
 from pathlib import Path
 from llama_cpp import Llama
 import config
+from logger import setup_logging
 
 # Setup logging
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 # Global model instance (loaded once)
 _llm = None

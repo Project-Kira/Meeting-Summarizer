@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: meeting-summarizer-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount model directory (place your .gguf model here)
+      - ./models:/app/models:ro
+      # Mount logs directory
+      - ./logs:/app/logs
+      # Optional: mount conversation files for testing
+      - ./conversation.txt:/app/conversation.txt:ro
+    environment:
+      # Model configuration
+      - MODEL_PATH=models/mistral-7b-instruct-v0.2.Q4_K_M.gguf
+      - N_CTX=8192
+      - N_THREADS=4
+      - TEMPERATURE=0.7
+      - MAX_TOKENS=512
+      
+      # API configuration
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - LOG_LEVEL=INFO
+      
+      # Processing configuration
+      - CHUNK_SIZE_TOKENS=4000
+      - CHUNK_OVERLAP_RATIO=0.1
+      - MAX_INPUT_LENGTH=100000
+      - CHARS_PER_TOKEN=4
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 4G

@@ -6,16 +6,12 @@ Reads a conversation from a .txt file and outputs a summary.
 
 import sys
 import os
-import logging
 from summarize import summarize_conversation
 import config
+from logger import setup_logging
 
 # Setup logging
-logging.basicConfig(
-    level=getattr(logging, config.LOG_LEVEL),
-    format=config.LOG_FORMAT
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 
 def print_usage():

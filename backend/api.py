@@ -3,7 +3,6 @@ FastAPI server that exposes summarization endpoints.
 Provides REST API for frontend to communicate with the backend.
 """
 
-import logging
 from fastapi import FastAPI, HTTPException, UploadFile, File, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -11,13 +10,10 @@ from pydantic import BaseModel, Field
 from typing import Optional
 import config
 from summarize import summarize_conversation
+from logger import setup_logging
 
 # Setup logging
-logging.basicConfig(
-    level=getattr(logging, config.LOG_LEVEL),
-    format=config.LOG_FORMAT
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 # Create FastAPI app
 app = FastAPI(

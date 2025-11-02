@@ -2,13 +2,13 @@
 Summarization module that handles chunking and summarizing conversation text.
 """
 
-import logging
 from typing import List
 from inference import run_local_llm
 import config
+from logger import setup_logging
 
 # Setup logging
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 
 def estimate_tokens(text: str) -> int:
