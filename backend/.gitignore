@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+
+# Models
+*.gguf
+
+# Development files (not for commit)
+NEXT_PHASES.md
+test_frontend.html
+IMPLEMENTATION_STATUS.md
+
+# Logs
+*.log

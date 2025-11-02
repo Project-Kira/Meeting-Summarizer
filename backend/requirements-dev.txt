@@ -1,0 +1,23 @@
+# Development Dependencies for Meeting Summarizer
+# Install with: pip install -r requirements-dev.txt
+
+# Testing framework
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+
+# API testing
+httpx>=0.24.0
+
+# Code formatting
+black>=23.7.0
+
+# Linting
+ruff>=0.0.290
+
+# Type checking
+mypy>=1.5.0
+
+# Pre-commit hooks (optional)
+pre-commit>=3.3.0
