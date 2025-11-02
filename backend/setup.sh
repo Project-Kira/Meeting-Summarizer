@@ -56,3 +56,4 @@ echo "  1. Activate the virtual environment: source venv/bin/activate"
 echo "  2. Run: python main.py conversation.txt"
 echo ""
 echo "For more information, see BACKEND_README.md"
+g
