@@ -212,19 +212,19 @@ async def summarize_file(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 
-@app.on_event("startup")
-async def startup_event():
-    """Pre-load model on startup for faster first request."""
-    logger.info("Starting Meeting Summarizer API...")
-    logger.info(f"CORS origins: {config.API_CORS_ORIGINS}")
-    logger.info(f"Model path: {config.MODEL_PATH}")
-    logger.info("API ready to accept requests")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup on shutdown."""
-    logger.info("Shutting down Meeting Summarizer API...")
+@app.get("/", tags=["Root"])
+async def root():
+    """Root endpoint with API information."""
+    return {
+        "message": "Meeting Summarizer API",
+        "version": "1.0.0",
+        "endpoints": {
+            "health": "/api/health",
+            "summarize_text": "/api/summarize",
+            "summarize_file": "/api/summarize-file",
+            "docs": "/docs"
+        }
+    }
 
 
 if __name__ == "__main__":
