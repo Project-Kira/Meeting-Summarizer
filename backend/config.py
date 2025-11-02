@@ -42,7 +42,19 @@ LOG_MAX_BYTES = int(os.getenv("LOG_MAX_BYTES", str(10 * 1024 * 1024)))  # 10MB
 LOG_BACKUP_COUNT = int(os.getenv("LOG_BACKUP_COUNT", "5"))
 ENABLE_FILE_LOGGING = os.getenv("ENABLE_FILE_LOGGING", "true").lower() == "true"
 
-# API configuration (for future use)
+# API configuration
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
 API_PORT = int(os.getenv("API_PORT", "8000"))
 API_CORS_ORIGINS = os.getenv("API_CORS_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")
+
+# Whisper (audio transcription) configuration
+WHISPER_MODEL = os.getenv("WHISPER_MODEL", "base")  # tiny, base, small, medium, large
+WHISPER_DEVICE = os.getenv("WHISPER_DEVICE", "cpu")  # cpu or cuda
+WHISPER_LANGUAGE = os.getenv("WHISPER_LANGUAGE", "auto")  # auto or language code (e.g., 'en')
+
+# Audio processing configuration
+INPUT_DIR = Path(os.getenv("INPUT_DIR", str(BASE_DIR / "input")))
+OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", str(BASE_DIR / "output")))
+AUTO_PROCESS_ON_STARTUP = os.getenv("AUTO_PROCESS_ON_STARTUP", "true").lower() == "true"
+WATCH_INTERVAL = int(os.getenv("WATCH_INTERVAL", "5"))  # seconds
+DELETE_AFTER_PROCESSING = os.getenv("DELETE_AFTER_PROCESSING", "false").lower() == "true"
