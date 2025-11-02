@@ -95,12 +95,45 @@ case "$MODE" in
         fi
         exec python -m pytest tests/ -v
         ;;
+    audio)
+        if [ -z "$2" ]; then
+            echo -e "${RED}Error: audio mode requires a file path${NC}"
+            echo "Usage: ./start.sh audio <path/to/audio.mp3>"
+            exit 1
+        fi
+        echo "Processing audio file: $2"
+        exec python -c "
+from transcription import transcribe_audio_simple
+from summarize import summarize_conversation
+import sys
+
+audio_file = sys.argv[1]
+print('Transcribing audio...')
+text = transcribe_audio_simple(audio_file)
+print('\\nTranscription:')
+print(text)
+print('\\n' + '='*80 + '\\n')
+print('Generating summary...')
+summary = summarize_conversation(text)
+print('\\nSummary:')
+print(summary)
+" "$2"
+        ;;
+    daemon)
+        echo "Starting in daemon mode (continuous processing)..."
+        echo "Monitoring directory: ${INPUT_DIR:-input/}"
+        echo "Press Ctrl+C to stop"
+        export AUTO_PROCESS_ON_STARTUP=true
+        exec python -m uvicorn api:app --host "${API_HOST:-0.0.0.0}" --port "${API_PORT:-8000}"
+        ;;
     *)
         echo -e "${RED}Error: Unknown mode '$MODE'${NC}"
-        echo "Usage: ./start.sh [api|cli|test] [args...]"
-        echo "  api          - Start FastAPI server (default)"
-        echo "  cli <file>   - Run CLI with specified file"
-        echo "  test         - Run test suite"
+        echo "Usage: ./start.sh [api|cli|test|audio|daemon] [args...]"
+        echo "  api            - Start FastAPI server (default)"
+        echo "  cli <file>     - Run CLI with specified text file"
+        echo "  audio <file>   - Process audio file (transcribe + summarize)"
+        echo "  daemon         - Start in continuous mode (auto-process audio files)"
+        echo "  test           - Run test suite"
         exit 1
         ;;
 esac
