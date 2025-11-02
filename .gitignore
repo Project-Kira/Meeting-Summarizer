@@ -27,7 +27,13 @@ next-env.d.ts
 
 */venv/*
 */.venv/*
-*/models/*
+*/models
 mistral*
 __pycache__
 *.log
+*.pyc
+.pytest_cache
+.ruff_cache
+htmlcov
+.coverage
+
