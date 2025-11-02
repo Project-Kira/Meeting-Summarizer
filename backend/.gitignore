@@ -37,3 +37,9 @@ IMPLEMENTATION_STATUS.md
 
 # Logs
 *.log
+
+# Audio processing
+input/
+output/
+!input/.gitkeep
+!output/.gitkeep
