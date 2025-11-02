@@ -1,0 +1,30 @@
+# Frontend
+Frontend/node_modules/
+Frontend/.next/
+Frontend/out/
+Frontend/build/
+Frontend/dist/
+Frontend/.env.local
+Frontend/.env.development.local
+Frontend/.env.test.local
+Frontend/.env.production.local
+Frontend/.DS_Store
+Frontend/*.log
+Frontend/npm-debug.log*
+Frontend/yarn-debug.log*
+Frontend/yarn-error.log*
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.bak
+*.tmp

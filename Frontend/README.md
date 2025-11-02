@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Frontend Setup & Run Guide
 
-## Getting Started
+## Quick Start
 
-First, run the development server:
+### 1️⃣ Install Dependencies
+
+```bash
+cd Frontend
+npm install
+```
+
+### 2️⃣ Configure API URL (Optional)
+
+Edit `Frontend/.env.local` if your backend is not on `http://localhost:8000`:
+
+```env
+NEXT_PUBLIC_API_URL=http://your-backend-url:port
+```
+
+### 3️⃣ Start Frontend
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 4️⃣ Open Browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Visit: **http://localhost:3000**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ⚠️ Important
 
-To learn more about Next.js, take a look at the following resources:
+**Backend Required:** This frontend needs a backend API running. 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+See **[BACKEND_API_SPEC.md](../BACKEND_API_SPEC.md)** for backend implementation details.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🧪 Quick Test
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Ensure backend is running and accessible
+2. Open http://localhost:3000
+3. Click "Start Meeting"
+4. Allow microphone access
+5. Speak for a few seconds
+6. Click "End Meeting"
+7. Wait for transcription and summary
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🐛 Troubleshooting
+
+### "Failed to fetch" error
+```bash
+# Test if backend is running
+curl http://localhost:8000
+
+# If not working, check:
+# 1. Backend is started
+# 2. NEXT_PUBLIC_API_URL in .env.local is correct
+# 3. Backend CORS allows http://localhost:3000
+```
+
+### Module errors
+```bash
+cd Frontend
+rm -rf node_modules package-lock.json .next
+npm install
+npm run dev
+```
+
+---
+
+## 📦 Build for Production
+
+```bash
+cd Frontend
+npm run build
+npm start
+```
+
+---
+
+## 📁 Project Structure
+
+```
+Frontend/
+├── app/
+│   ├── page.js          # Main meeting UI
+│   ├── layout.js        # App layout
+│   └── globals.css      # Tailwind styles
+├── lib/
+│   └── api.js           # API integration (4 endpoints)
+├── package.json
+├── .env.local           # API URL config
+└── tailwind.config.js
+```
+
+---
+
+## 🔌 API Endpoints Used
+
+All in `lib/api.js`:
+
+1. **POST** `/meeting/start` - Start session
+2. **POST** `/meeting/end` - Process audio
+3. **GET** `/meeting/{id}` - Get meeting (optional)
+4. **GET** `/` - Health check
+
+See [BACKEND_API_SPEC.md](../BACKEND_API_SPEC.md) for details.
