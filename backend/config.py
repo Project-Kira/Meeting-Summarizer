@@ -9,10 +9,10 @@ from pathlib import Path
 # Base directory
 BASE_DIR = Path(__file__).parent
 
-# Model configuration
+# Model configuration - Point to existing model in Meeting-Summarizer directory
 MODEL_PATH = os.getenv(
     "MODEL_PATH",
-    str(BASE_DIR / "models" / "mistral-7b-instruct-v0.2.Q4_K_M.gguf")
+    "/home/user/kali/projects/30days/mSummarizer/Meeting-Summarizer/backend/models/mistral-7b-instruct-v0.2.Q4_K_M.gguf"
 )
 
 # LLM inference parameters
@@ -49,4 +49,4 @@ TEMP_AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 # API configuration (for future use)
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
 API_PORT = int(os.getenv("API_PORT", "8000"))
-API_CORS_ORIGINS = os.getenv("API_CORS_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")
+API_CORS_ORIGINS = os.getenv("API_CORS_ORIGINS", "http://localhost:3000,http://localhost:3001,http://localhost:5173").split(",")

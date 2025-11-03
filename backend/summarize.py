@@ -82,7 +82,9 @@ Conversation text:
 Provide a concise summary of the key points discussed in this section. Use bullet points if appropriate."""
     
     logger.info(f"Summarizing chunk {chunk_num}/{total_chunks}...")
+    logger.info(f"🔍 INPUT TEXT (chunk {chunk_num}): '{chunk}'")
     summary = run_local_llm(prompt, max_tokens=config.MAX_TOKENS_CHUNK)
+    logger.info(f"✨ LLM OUTPUT (chunk {chunk_num}): '{summary}'")
     return summary
 
 

@@ -258,7 +258,7 @@ export default function MeetingPage() {
               🤖 AI Summary
             </h2>
             <p className="text-field-content">
-              {summary || "AI-generated summary will appear here... sadfkl;j;dfjklsjkl;dsfjkl;sdfljk;dfjkl;fsdjl;ksdfjkl;asdfk;jldfsjkl;asdfjkl;sdfjkl;sdfjkl;fsdkjl;fsdkl;jsdfkl;jsdfklsadjkl;ffsdklj"}
+              {summary || "AI-generated summary will appear here..."}
             </p>
           </div>
         </div>

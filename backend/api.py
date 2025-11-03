@@ -299,10 +299,12 @@ async def process_audio(file: UploadFile = File(...)):
             )
         
         logger.info(f"Transcription complete: {len(transcription_result)} characters")
+        logger.info(f"📝 TRANSCRIBED TEXT: '{transcription_result}'")
         
         # Step 2: Summarize transcription using Mistral
         logger.info("Starting summarization...")
         summary = summarize_conversation(transcription_result)
+        logger.info(f"📋 SUMMARY GENERATED: '{summary}'")
         logger.info("Summarization complete")
         
         # Get additional info (we need full result for metadata)
