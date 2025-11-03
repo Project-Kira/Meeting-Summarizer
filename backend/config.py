@@ -37,6 +37,15 @@ MAX_INPUT_LENGTH = int(os.getenv("MAX_INPUT_LENGTH", "10000000"))  # 10MB chars
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
+# Whisper transcription configuration
+WHISPER_MODEL = os.getenv("WHISPER_MODEL", "base")  # tiny, base, small, medium, large
+WHISPER_DEVICE = os.getenv("WHISPER_DEVICE", "cpu")  # cpu or cuda
+WHISPER_LANGUAGE = os.getenv("WHISPER_LANGUAGE", "auto")  # auto, en, es, fr, etc.
+
+# Audio file storage (temporary)
+TEMP_AUDIO_DIR = Path(os.getenv("TEMP_AUDIO_DIR", str(BASE_DIR / "temp_audio")))
+TEMP_AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+
 # API configuration (for future use)
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
 API_PORT = int(os.getenv("API_PORT", "8000"))

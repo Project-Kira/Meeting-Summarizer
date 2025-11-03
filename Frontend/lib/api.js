@@ -26,45 +26,45 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
  * }
  */
 export const processAudioAPI = async (audioBlob) => {
-  try {
-    console.log('📤 processAudioAPI called');
-    console.log('   Audio size:', audioBlob.size, 'bytes');
-    console.log('   Audio type:', audioBlob.type);
-    
-    // Prepare audio file to send
-    const formData = new FormData();
-    formData.append('file', audioBlob, 'meeting.wav');
-    console.log('   FormData created with audio file');
+	try {
+		console.log('📤 processAudioAPI called');
+		console.log('   Audio size:', audioBlob.size, 'bytes');
+		console.log('   Audio type:', audioBlob.type);
 
-    const url = `${API_BASE_URL}/process`;
-    console.log('   Sending POST request to:', url);
+		// Prepare audio file to send
+		const formData = new FormData();
+		formData.append('file', audioBlob, 'meeting.wav');
+		console.log('   FormData created with audio file');
 
-    // Send to backend
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData,
-    });
+		const url = `${API_BASE_URL}/api/process`;
+		console.log('   Sending POST request to:', url);
 
-    console.log('   Response status:', response.status, response.statusText);
+		// Send to backend
+		const response = await fetch(url, {
+			method: 'POST',
+			body: formData,
+		});
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+		console.log('   Response status:', response.status, response.statusText);
 
-    // Get transcription and summary from backend
-    const data = await response.json();
-    console.log('   Response data received:');
-    console.log('   - Has transcription:', !!data.transcription);
-    console.log('   - Has summary:', !!data.summary);
-    console.log('   - Transcription length:', data.transcription?.length || 0);
-    console.log('   - Summary length:', data.summary?.length || 0);
-    
-    return { success: true, data };
-  } catch (error) {
-    console.error('❌ Process audio API error:', error);
-    console.error('   Error details:', error.message);
-    return { success: false, error: error.message };
-  }
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		// Get transcription and summary from backend
+		const data = await response.json();
+		console.log('   Response data received:');
+		console.log('   - Has transcription:', !!data.transcription);
+		console.log('   - Has summary:', !!data.summary);
+		console.log('   - Transcription length:', data.transcription?.length || 0);
+		console.log('   - Summary length:', data.summary?.length || 0);
+
+		return { success: true, data };
+	} catch (error) {
+		console.error('❌ Process audio API error:', error);
+		console.error('   Error details:', error.message);
+		return { success: false, error: error.message };
+	}
 };
 
 /**
@@ -73,19 +73,19 @@ export const processAudioAPI = async (audioBlob) => {
  * Checks if backend is running
  */
 export const healthCheckAPI = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/`, {
-      method: 'GET',
-    });
+	try {
+		const response = await fetch(`${API_BASE_URL}/api/health`, {
+			method: 'GET',
+		});
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
 
-    const data = await response.json();
-    return { success: true, data };
-  } catch (error) {
-    console.error('Health check API error:', error);
-    return { success: false, error: error.message };
-  }
+		const data = await response.json();
+		return { success: true, data };
+	} catch (error) {
+		console.error('Health check API error:', error);
+		return { success: false, error: error.message };
+	}
 };

@@ -15,3 +15,9 @@ python-multipart>=0.0.6
 
 # Environment variable support
 python-dotenv>=1.0.0
+
+# Audio transcription with OpenAI Whisper
+openai-whisper>=20231117
+
+# Audio processing (required by Whisper)
+ffmpeg-python>=0.2.0
