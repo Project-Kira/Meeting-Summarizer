@@ -7,9 +7,9 @@ import os
 from pathlib import Path
 
 # Base directory
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).parent.parent
 
-# Model configuration - Point to existing model in Meeting-Summarizer directory
+# Model configuration
 MODEL_PATH = os.getenv(
     "MODEL_PATH",
     str(BASE_DIR / "models" / "mistral-7b-instruct-v0.2.Q4_K_M.gguf")
@@ -37,16 +37,7 @@ MAX_INPUT_LENGTH = int(os.getenv("MAX_INPUT_LENGTH", "10000000"))  # 10MB chars
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
-# Whisper transcription configuration
-WHISPER_MODEL = os.getenv("WHISPER_MODEL", "base")  # tiny, base, small, medium, large
-WHISPER_DEVICE = os.getenv("WHISPER_DEVICE", "cpu")  # cpu or cuda
-WHISPER_LANGUAGE = os.getenv("WHISPER_LANGUAGE", "auto")  # auto, en, es, fr, etc.
-
-# Audio file storage (temporary)
-TEMP_AUDIO_DIR = Path(os.getenv("TEMP_AUDIO_DIR", str(BASE_DIR / "temp_audio")))
-TEMP_AUDIO_DIR.mkdir(parents=True, exist_ok=True)
-
 # API configuration (for future use)
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
 API_PORT = int(os.getenv("API_PORT", "8000"))
-API_CORS_ORIGINS = os.getenv("API_CORS_ORIGINS", "http://localhost:3000,http://localhost:3001,http://localhost:5173").split(",")
+API_CORS_ORIGINS = os.getenv("API_CORS_ORIGINS", "http://localhost:3000,http://localhost:5173").split(",")

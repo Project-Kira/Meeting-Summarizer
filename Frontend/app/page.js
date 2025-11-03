@@ -16,6 +16,29 @@ export default function MeetingPage() {
   const [debugInfo, setDebugInfo] = useState(""); // ← NEW: Debug information
   const recorderRef = useRef(null);
   const intervalRef = useRef(null);
+const processAudioAPI = async (audioBlob) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", audioBlob, "recording.wav");
+
+    const response = await fetch("http://localhost:8000/api/process", {
+      method: "POST",
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ Backend error:", errorText);
+      return { success: false, error: errorText };
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (err) {
+    console.error("🔥 API call failed:", err);
+    return { success: false, error: err.message };
+  }
+};
 
   // Start Recording (browser)
   const startRecording = async () => {
@@ -122,7 +145,6 @@ export default function MeetingPage() {
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white p-8">
       {/* Ambient glow */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(236,72,153,0.15),transparent_70%)] blur-3xl" />
-
       <motion.div
         className="max-w-6xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
